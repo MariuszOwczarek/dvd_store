@@ -2,7 +2,6 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, Boo
 from sqlalchemy.ext.declarative import declarative_base
 from session import engine
 
-
 Base = declarative_base(engine)
 
 
@@ -10,7 +9,7 @@ class Category(Base):
     __tablename__ = "category"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
+    name = Column(String(50), nullable=False)
     last_update = Column(DateTime, onupdate=True)
 
     def __str__(self):
@@ -20,6 +19,7 @@ class Category(Base):
 class FilmCategory(Base):
     __tablename__ = "film_category"
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
     film_id = Column(Integer, ForeignKey('film.id'))
     category_id = Column(Integer, ForeignKey('category.id'))
     last_update = Column(DateTime, onupdate=True)
@@ -32,8 +32,8 @@ class Film(Base):
     __tablename__ = "film"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String, nullable=False)
-    description = Column(String, nullable=False)
+    title = Column(String(50), nullable=False)
+    description = Column(String(200), nullable=False)
     release_year = Column(DateTime, nullable=False)
     language_id = Column(Integer, ForeignKey('language.language_id'))
     rental_duration = Column(Integer, nullable=False, default=0)
@@ -42,8 +42,8 @@ class Film(Base):
     replacement_cost = Column(Float, nullable=False, default=0)
     rating = Column(Integer, nullable=False)
     last_update = Column(DateTime, onupdate=True)
-    special_features = Column(String, nullable=False)
-    fulltext = Column(String, nullable=False)
+    special_features = Column(String(50), nullable=False)
+    fulltext = Column(String(200), nullable=False)
 
     def __str__(self):
         return f'Title: {self.title}'
@@ -53,7 +53,7 @@ class Language(Base):
     __tablename__ = "language"
 
     language_id = Column(Integer, primary_key=True, autoincrement=True)
-    name = Column(String, nullable=False)
+    name = Column(String(50), nullable=False)
     last_update = Column(DateTime, onupdate=True)
 
     def __str__(self):
@@ -63,6 +63,7 @@ class Language(Base):
 class FilmActor(Base):
     __tablename__ = "film_actor"
 
+    id = Column(Integer, primary_key=True, autoincrement=True)
     actor_id = Column(Integer, ForeignKey('actor.actor_id'))
     film_id = Column(Integer, ForeignKey('film.id'))
     last_update = Column(DateTime, onupdate=True)
@@ -75,8 +76,8 @@ class Actor(Base):
     __tablename__ = "actor"
 
     actor_id = Column(Integer, primary_key=True, autoincrement=True)
-    first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
     last_update = Column(DateTime, onupdate=True)
 
     def __str__(self):
@@ -87,7 +88,7 @@ class Inventory(Base):
     __tablename__ = "inventory"
 
     inventory_id = Column(Integer, primary_key=True, autoincrement=True)
-    film_id = Column(Integer, ForeignKey('film.film_id'))
+    film_id = Column(Integer, ForeignKey('film.id'))
     store_id = Column(Integer, ForeignKey('store.store_id'))
     last_update = Column(DateTime, onupdate=True)
 
@@ -109,15 +110,16 @@ class Rental(Base):
     def __str__(self):
         return f'Rental: {self.rental_id}, Rental Date: {self.rental_date}'
 
+
 class Customer(Base):
     __tablename__ = 'customer'
 
     customer_id = Column(Integer, primary_key=True, autoincrement=True)
     store_id = Column(Integer, ForeignKey('store.store_id'))
-    first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
-    email = Column(String, nullable=False)
-    address_id = Column(String, nullable=False)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
+    email = Column(String(50), nullable=False)
+    address_id = Column(Integer, ForeignKey('address.address_id'))
     is_active = Column(Boolean, nullable=False, default=True)
     create_date = Column(DateTime, nullable=False)
     lastupdate = Column(DateTime, onupdate=True)
@@ -125,6 +127,7 @@ class Customer(Base):
 
     def __str__(self):
         return f'Customer: {self.first_name} {self.last_name}'
+
 
 class Payment(Base):
     __tablename__ = 'payment'
@@ -139,37 +142,40 @@ class Payment(Base):
     def __str__(self):
         return f'Payment: {self.amount} {self.payment_date}'
 
+
 class Staff(Base):
     __tablename__ = 'staff'
 
     staff_id = Column(Integer, primary_key=True, autoincrement=True)
-    first_name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
+    first_name = Column(String(50), nullable=False)
+    last_name = Column(String(50), nullable=False)
     address_id = Column(Integer, ForeignKey('address.address_id'))
     store_id = Column(Integer, ForeignKey('store.store_id'))
     active = Column(Boolean, default=True)
-    username = Column(String, nullable=False)
-    password = Column(String, nullable=False)
+    username = Column(String(50), nullable=False)
+    password = Column(String(50), nullable=False)
     last_update = Column(DateTime, onupdate=True)
-    picture = Column(String, nullable=False)
+    picture = Column(String(50), nullable=False)
 
     def __str__(self):
         return f'Staff: {self.first_name} {self.last_name}'
+
 
 class Address(Base):
     __tablename__ = 'address'
 
     address_id = Column(Integer, primary_key=True, autoincrement=True)
-    address = Column(String, nullable=False)
-    address2 = Column(String, nullable=False)
-    district = Column(String, nullable=False)
+    address = Column(String(100), nullable=False)
+    address2 = Column(String(100), nullable=False)
+    district = Column(String(50), nullable=False)
     city_id = Column(Integer, ForeignKey('city.city_id'))
-    postal_code = Column(String, nullable=False)
-    phone = Column(String, nullable=False)
+    postal_code = Column(String(50), nullable=False)
+    phone = Column(String(50), nullable=False)
     last_update = Column(DateTime, onupdate=True)
 
     def __str__(self):
         return f'Address: {self.address} {self.postal_code}'
+
 
 class Store(Base):
     __tablename__ = 'store'
@@ -187,18 +193,19 @@ class City(Base):
     __tablename__ = 'city'
 
     city_id = Column(Integer, primary_key=True, autoincrement=True)
-    city = Column(String, nullable=False)
+    city = Column(String(50), nullable=False)
     country_id = Column(Integer, ForeignKey('country.country_id'))
     last_update = Column(DateTime, onupdate=True)
 
     def __str__(self):
         return f'City: {self.city}'
 
+
 class Country(Base):
     __tablename__ = 'country'
 
     country_id = Column(Integer, primary_key=True, autoincrement=True)
-    country = Column(String, nullable=False)
+    country = Column(String(50), nullable=False)
     last_update = Column(DateTime, onupdate=True)
 
     def __str__(self):
